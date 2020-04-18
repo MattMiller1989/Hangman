@@ -9,14 +9,35 @@ class Hangman_Game
         @turns_left=7
         @disp=""
         @used_letters=[]
-        create_disp
+        
         @empty_spots=@secret_word.length
-        print_disp
-        start_game
+        
+        start_or_continue
+        
 
     end
 
+    def start_or_continue
+        good_response=false
+        while !good_response
+            puts "Do you want to continue you previous game? [y/n]"
+            response=gets.chomp
+            if(response=="y")
+                good_response=true
+                load_game
+                start_game
+            end
+            if(response=="n")
+                good_response=true
+                start_game
+            end
+        end
+    end
+
     def start_game
+        create_disp
+        print_disp
+        
         game_done=false
 
         while !game_done
@@ -96,7 +117,7 @@ class Hangman_Game
                 valid_guess=true
             end
             if guess.match(/save/)
-                save_game(self)
+                save_game
                 
                 break
             end
@@ -127,13 +148,32 @@ class Hangman_Game
         puts "GOOD JOB YOU FUCKING NERD!!! YOU BEAT A COMPUTer"
     end
 
+    def save_game()
+        data={
+            "disp"        => @disp,
+            "secret_word" => @secret_word,
+            "used_letters"=> @used_letters,
+            "turns_left"  => @turns_left
+        }
+        yaml = YAML.dump(data)
+        game_file = File.open("save.txt","w")
+        game_file.write(yaml)
+        #puts yaml
+    end
+
+    def load_game
+        
+        yaml = YAML.safe_load(File.open("save.txt"))
+        puts yaml
+        @disp               = yaml["disp"]
+        @secret_word        = yaml["secret_word"]
+        @used_letters       = yaml["used_letters"]
+        @turns_left         = yaml["turns_left"]
+    end
+
 end
 
-def save_game(game)
-	yaml = YAML::dump(game)
-    game_file = File.open("save.txt","w")
-  game_file.write(yaml)
-  #puts yaml
-end
+
 
 my_game=Hangman_Game.new
+

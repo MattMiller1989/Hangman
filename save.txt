@@ -1,0 +1,4 @@
+---
+secret_word: blitz
+used_letters: []
+turns_left: 7
